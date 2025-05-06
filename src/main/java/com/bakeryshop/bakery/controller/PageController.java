@@ -25,7 +25,7 @@ public class PageController {
     // Mapping for the form page
     @GetMapping({"/formpage"})
     public String getFormpage() {
-        return "bakeryforms"; //tells Spring to render "bakeryforms.html" file
+        return "bakeryforms"; //tells Spring to render "bakeryforms." file
     }
 
     // Mapping for the home page

@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "products")
@@ -14,11 +17,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Product name is required")
     private String name;
+
+    @NotNull(message = "Price is required")
+    @Size(min = 0, message = "Price must be a positive number")
     private double price;
+
+    @NotBlank(message = "Category is required")
     private String category;
 
     @Column(name = "stock")
+    @Size(min = 0, message = "Stock must be a positive number")
+    @NotNull(message = "Stock is required")
     private int stock;
 
     // Getters and setters
