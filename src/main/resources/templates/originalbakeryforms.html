@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakery API</title>
+    <link rel="icon" type="image/x-icon" href="/images/cake.png">  <!--Favicon-->
+    <link rel="stylesheet" href="/css/bakeryforms.css">  <!-- The CSS file should contain the CSS provided earlier -->
+
+    <script>
+        async function getAllProducts() {
+        const response = await fetch('http://localhost:8081/api/products');
+        const products = await response.json();
+        console.log(products);
+        }
+
+        async function createProduct() {
+            const name = document.getElementById('add-productname').value;
+            const price = parseFloat(document.getElementById('add-price').value);
+            const category = document.getElementById('add-category').value;
+            const stock = parseInt(document.getElementById('add-stock').value);
+
+            const product = {
+                //product-table column name: java class variable name
+                name: name,
+                price: price,
+                category: category,
+                stock: stock
+            };
+
+            const response = await fetch(`http://localhost:8081/api/products`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(product)
+            });
+
+            const newProduct = await response.json();
+            console.log(newProduct);
+
+            // Clear input fields after submission
+            document.getElementById('add-productname').value = '';
+            document.getElementById('add-price').value = '';
+            document.getElementById('add-category').value = '';
+            document.getElementById('add-stock').value = '';
+        }
+
+        async function updateProduct() {
+            const id = document.getElementById('update-id').value;
+            const name = document.getElementById('update-name').value;
+            const price = parseFloat(document.getElementById('update-price').value);
+            const category = document.getElementById('update-category').value;
+            const stock = parseInt(document.getElementById('update-stock').value);
+
+            const product = {
+                //product-table column name: java class variable name
+                name: name,
+                price: price,
+                category: category,
+                stock: stock
+            };
+            
+            const response = await fetch(`http://localhost:8081/api/products/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(product)
+            });
+
+            const newProduct = await response.json();
+            console.log(newProduct);
+
+            // Clear input fields after submission
+            document.getElementById('update-id').value = '';
+            document.getElementById('update-name').value = '';
+            document.getElementById('update-price').value = '';
+            document.getElementById('update-category').value = '';
+            document.getElementById('update-stock').value = '';
+        }
+
+        async function deleteProduct() {
+            const id = document.getElementById('delete-id').value;
+
+            await fetch(`http://localhost:8081/api/products/${id}`, {
+                method: 'DELETE'
+            });
+
+            console.log(`Product with id ${id} deleted`);
+
+            // Clear input field after submission
+            document.getElementById('delete-id').value = '';
+        }
+
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <h1>
+        <img src="images/croissant.png" alt="Croissant Icon" style="height: 60px; vertical-align: middle; margin-right: 5px;">
+        Bakery API
+        <img src="images/cupcakepink.png" alt="Cupcake Icon" style="height: 60px; vertical-align: middle; margin-right: 5px;">
+    </h1>
+
+    <div class="section get-products" >
+        <h2>
+        Get Products</h2>
+        <button onclick="getAllProducts()">Get Products</button>
+    </div>
+
+    <div class="section add-product">
+        <h2>Add Product </h2>
+        <label>Product Name: <input type="text" id="add-productname"></label>
+        <label>Price: <input type="number" id="add-price"></label>
+        <label>Category: <input type="text" id="add-category"></label>
+        <label>Stock: <input type="number" id="add-stock"></label>
+        <button onclick="createProduct()">Add Product</button>
+    </div>
+
+    <div class="section update-product">
+        <h2>Update Product</h2>
+        <label>ID: <input type="number" id="update-id"></label>
+        <label>Product Name: <input type="text" id="update-name"></label>
+        <label>Price: <input type="number" id="update-price"></label>
+        <label>Category: <input type="text" id="update-category"></label>
+        <label>Stock: <input type="number" id="update-stock"></label>
+        <button onclick="updateProduct()">Update Product</button>
+    </div>
+
+    <div class="section delete-product">
+        <h2>Delete Product</h2>
+        <label>ID: <input type="number" id="delete-id"></label>
+        <button onclick="deleteProduct()">Delete Product</button>
+    </div>
+</div>
+</body>
+</html>

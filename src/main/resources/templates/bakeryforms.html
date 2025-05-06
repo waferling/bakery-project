@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakery API</title>
+    <link rel="icon" type="image/x-icon" href="/images/cake.png">
+    <link rel="stylesheet" href="/css/bakeryforms.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>
+        <img src="images/croissant.png" alt="Croissant Icon" style="height: 60px; vertical-align: middle; margin-right: 5px;">
+        Bakery API
+        <img src="images/cupcakepink.png" alt="Cupcake Icon" style="height: 60px; vertical-align: middle; margin-right: 5px;">
+    </h1>
+
+    <div class="section get-products">
+        <h2>Get Products</h2>
+        <button onclick="getAllProducts()">Get Products</button>
+    </div>
+
+    <div class="section add-product">
+        <h2>Add Product</h2>
+        <form id="add-form" method="post" action="/createProduct">
+            <label>Product Name: <input type="text" name="name" id="add-productname" required></label>
+            <label>Price: <input type="number" name="price" id="add-price" required min="0.01" step="0.01"></label>
+            <label>Category: <input type="text" name="category" id="add-category" required></label>
+            <label>Stock: <input type="number" name="stock" id="add-stock" required min="0" step="1"></label>
+            <button type="submit">Add Product</button>
+        </form>
+        <div id="add-message"></div>
+    </div>
+
+
+    <div class="section update-product">
+        <h2>Update Product</h2>
+        <form id="update-form">
+            <label>ID: <input type="number" id="update-id" required min="1"></label>
+            <label>Product Name: <input type="text" id="update-name" required></label>
+            <label>Price: <input type="number" id="update-price" required min="0.01" step="0.01"></label>
+            <label>Category: <input type="text" id="update-category" required></label>
+            <label>Stock: <input type="number" id="update-stock" required min="0" step="1"></label>
+            <button type="submit">Update Product</button>
+        </form>
+        <div id="update-message"></div>
+    </div>
+
+    <div class="section delete-product">
+        <h2>Delete Product</h2>
+        <form id="delete-form">
+            <label>ID: <input type="number" id="delete-id" required min="1"></label>
+            <button type="submit">Delete Product</button>
+        </form>
+        <div id="delete-message"></div>
+    </div>
+</div>
+
+<script>
+
+    // Clear form fields after submission
+    function clearForm(formId) {
+            const form = document.getElementById(formId);
+            form.reset();  // Reset all form fields to default values (empty)
+        }
+
+    async function getAllProducts() {
+        const response = await fetch('http://localhost:8081/api/products');
+        const products = await response.json();
+        console.log(products);
+
+        // return products to then check uniqueness of product name
+        return products;
+    }
+
+    // Check if the product name is unique
+    async function isUniqueProductName(name, id = null) {
+        const products = await getAllProducts();
+        const existingProduct = products.find(product => product.name === name && product.id !== id);
+        return !existingProduct; // Return true if the product name is unique
+    }
+
+    async function createProduct() {
+        const name = $('#add-productname').val().trim();
+        const price = parseFloat($('#add-price').val());
+        const category = $('#add-category').val().trim();
+        const stock = parseInt($('#add-stock').val());
+
+        if (!name || price <= 0 || !category || stock < 0 || !Number.isInteger(stock)) {
+            $('#add-message').text("Please enter valid product details.").css('color', 'red');
+            return;
+        }
+
+        const product = { name, price, category, stock };
+
+        try {
+            const response = await fetch(`http://localhost:8081/api/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product)
+            });
+
+            if (response.ok) {
+                $('#add-message').text("Product added successfully.").css('color', 'green');
+                $('#add-form')[0].reset();
+            } else {
+                $('#add-message').text("Failed to add product.").css('color', 'red');
+            }
+        } catch (error) {
+            $('#add-message').text("Error: " + error.message).css('color', 'red');
+        }
+    }
+
+    async function updateProduct() {
+        const id = parseInt($('#update-id').val());
+        const name = $('#update-name').val().trim();
+        const price = parseFloat($('#update-price').val());
+        const category = $('#update-category').val().trim();
+        const stock = parseInt($('#update-stock').val());
+
+        if (!id || !name || price <= 0 || !category || stock < 0 || !Number.isInteger(stock)) {
+            $('#update-message').text("Please enter valid update details.").css('color', 'red');
+            return;
+        }
+
+        const product = { name, price, category, stock };
+
+        try {
+            const response = await fetch(`http://localhost:8081/api/products/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product)
+            });
+
+            if (response.ok) {
+                $('#update-message').text("Product updated successfully.").css('color', 'green');
+                $('#update-form')[0].reset();
+            } else {
+                $('#update-message').text("Failed to update product.").css('color', 'red');
+            }
+        } catch (error) {
+            $('#update-message').text("Error: " + error.message).css('color', 'red');
+        }
+    }
+
+    async function deleteProduct() {
+        const id = parseInt($('#delete-id').val());
+
+        if (!id || id <= 0) {
+            $('#delete-message').text("Please enter a valid product ID.").css('color', 'red');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8081/api/products/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                $('#delete-message').text(`Product with ID ${id} deleted.`).css('color', 'green');
+                $('#delete-form')[0].reset();
+            } else {
+                $('#delete-message').text("Failed to delete product.").css('color', 'red');
+            }
+        } catch (error) {
+            $('#delete-message').text("Error: " + error.message).css('color', 'red');
+        }
+    }
+
+    $(document).ready(function () {
+        $('#add-form').submit(function (e) {
+            e.preventDefault();
+            createProduct();
+        });
+
+        $('#update-form').submit(function (e) {
+            e.preventDefault();
+            updateProduct();
+        });
+
+        $('#delete-form').submit(function (e) {
+            e.preventDefault();
+            deleteProduct();
+        });
+    });
+</script>
+</body>
+</html>

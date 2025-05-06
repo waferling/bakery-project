@@ -1,0 +1,132 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="icon" href="/images/cake.png">
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        #chart-container-1, #chart-container-2 {
+            width: 500px;
+            height: 350px;
+            margin: 30px auto;
+        }
+        canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        h1 {
+            color: #470b1f;
+        }
+        h2 {
+            color: #7a58b9;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Bakery Dashboard</h1>
+        <nav>
+            <a href="/home">Home</a>
+            <a href="/products">All Products</a>
+            <a href="/formpage">Forms</a>
+        </nav>
+    </header>
+
+    <h2>Product Count by Category</h2>
+    <div id="chart-container-1">
+        <canvas id="categoryChart"></canvas>
+    </div>
+
+    <h2>Total Stock by Category</h2>
+    <div id="chart-container-2">
+        <canvas id="stockChart"></canvas>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $.getJSON("http://localhost:8081/api/products", function (products) {
+                const categoryCounts = {};
+                const categoryStocks = {};
+    
+                // Group products by category
+                products.forEach(p => {
+                    const category = p.category;
+    
+                    // Count how many products per category
+                    categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+    
+                    // Sum total stock per category
+                    categoryStocks[category] = (categoryStocks[category] || 0) + p.stock;
+                });
+    
+                const labels = Object.keys(categoryCounts);
+                const countData = Object.values(categoryCounts);
+                const stockData = Object.values(categoryStocks);
+    
+                // Chart 1: Product Count by Category
+                new Chart(document.getElementById('categoryChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Product Count',
+                            data: countData,
+                            backgroundColor: 'rgba(111, 215, 190, 0.8)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Number of Products per Category'
+                            }
+                        }
+                    }
+                });
+    
+                // Chart 2: Stock per Category
+                new Chart(document.getElementById('stockChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Total Stock',
+                            data: stockData,
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Total Stock per Category'
+                            }
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    
+
+
+</body>
+</html>

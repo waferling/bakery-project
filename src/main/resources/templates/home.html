@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Sweet Tooth</title>
+  <link rel="icon" type="image/x-icon" href="/images/cake.png">  <!--Favicon-->
+  <link rel="stylesheet" href="/css/styles.css">  <!-- The CSS file should contain the CSS provided earlier -->
+</head>
+<body>
+  <header>
+    The Sweet Tooth
+    <nav>
+      <a href="#">Home</a>
+      <a href="#menu">Menu</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h1>Freshly Baked, Every Day</h1>
+      <p>Welcome to The Sweet Tooth: a bakery where every treat is crafted with love and the finest ingredients. Satisfy your cravings with our selection of goodies in a pastel wonderland.</p>
+      
+      <a href="/products" class="button">Order Now</a>
+    </section>
+
+    <section id="menu" style="margin-top:2rem;">
+      <h2>Our Specialties</h2>
+      <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: space-between;">
+        <div style="flex:1; min-width:220px; text-align:center;">
+          <img src="/images/cupcake.jpg" alt="Cakes" />
+          <h3>Cakes</h3>
+          <p>Decadent layer cakes, cupcakes, and more, with a modern twist.</p>
+        </div>
+        <div style="flex:1; min-width:220px; text-align:center;">
+          <img src="/images/pastries.jpg" alt="Pastries" />
+          <h3>Pastries</h3>
+          <p>Flaky croissants, fruit danishes, and seasonal specialties.</p>
+        </div>
+        <div style="flex:1; min-width:220px; text-align:center;">
+          <img src="/images/bread.jpg" alt="Bread" />
+          <h3>Bread</h3>
+          <p>Artisan sourdough, baguettes, and gluten-free options available.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" style="margin-top:2rem;">
+      <h2>About Us</h2>
+      <p>Founded in 2017, The Sweet Tooth brings the warmth of home baking to your table. Our team is passionate about creating beautiful, delicious treats that make every day a little sweeter.</p>
+    </section>
+
+    <section id="contact" style="margin-top:2rem;">
+      <h2>Contact</h2>
+      <form autocomplete="off" method="post" action="" style="max-width:400px;">
+        <label for="name">Name</label><br>
+        <input type="text" id="name" name="name" autocomplete="off" style="width:100%;padding:0.5em;margin-bottom:1em;border-radius:1em;border:1px solid #a8e6cf;"><br>
+        <label for="email">Email</label><br>
+        <input type="email" id="email" name="email" autocomplete="off" style="width:100%;padding:0.5em;margin-bottom:1em;border-radius:1em;border:1px solid #a8e6cf;"><br>
+        <label for="message">Message</label><br>
+        <textarea id="message" name="message" rows="4" style="width:100%;padding:0.5em;border-radius:1em;border:1px solid #a8e6cf;"></textarea><br>
+        <button class="button" type="submit" style="margin-top:1em;">Send</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Sweet Sprout Bakery &mdash; Baked with love in your neighborhood
+  </footer>
+</body>
+</html>
