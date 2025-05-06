@@ -46,5 +46,5 @@ public class ProductService {
     public List<ProductRepository.OrderProductView> getOrderProductDetails() {
         return productRepository.fetchOrderProductDetails();
     }
-
+   
 }
