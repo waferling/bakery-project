@@ -33,7 +33,7 @@
 
     <div class="section add-product">
         <h2>Add Product</h2>
-        <form id="add-form" method="post" action="/api/products">
+        <form id="add-form" method="post" action="/api/products" novalidate>
             <label>Product Name: <input type="text" name="name" id="add-productname" required></label>
             <label>Price: <input type="number" name="price" id="add-price" required min="0.01" step="0.01"></label>
             <label>Category: <input type="text" name="category" id="add-category" required></label>
@@ -43,10 +43,9 @@
         <div id="add-message"></div>
     </div>
 
-
     <div class="section update-product">
         <h2>Update Product</h2>
-        <form id="update-form">
+        <form id="update-form" novalidate>
             <label>ID: <input type="number" id="update-id" required min="1"></label>
             <label>Product Name: <input type="text" id="update-name" required></label>
             <label>Price: <input type="number" id="update-price" required min="0.01" step="0.01"></label>
@@ -59,7 +58,7 @@
 
     <div class="section delete-product">
         <h2>Delete Product</h2>
-        <form id="delete-form">
+        <form id="delete-form" novalidate>
             <label>ID: <input type="number" id="delete-id" required min="1"></label>
             <button type="submit">Delete Product</button>
         </form>
@@ -69,13 +68,8 @@
 
 <script>
 
-    // Clear form fields after submission
-    function clearForm(formId) {
-            const form = document.getElementById(formId);
-            form.reset();  // Reset all form fields to default values (empty)
-        }
-
-    async function getAllProducts() {
+        // ---------- GET ALL PRODUCTS ----------
+        async function getAllProducts() {
         const response = await fetch('http://localhost:8081/api/products');
         const products = await response.json();
         console.log(products);
@@ -84,116 +78,120 @@
         return products;
     }
 
-    // Check if the product name is unique
-    async function isUniqueProductName(name, id = null) {
-        const products = await getAllProducts();
-        const existingProduct = products.find(product => product.name === name && product.id !== id);
-        return !existingProduct; // Return true if the product name is unique
-    }
-
-    async function createProduct() {
-        const name = $('#add-productname').val().trim();
-        const price = parseFloat($('#add-price').val());
-        const category = $('#add-category').val().trim();
-        const stock = parseInt($('#add-stock').val());
-
-        if (!name || price <= 0 || !category || stock < 0 || !Number.isInteger(stock)) {
-            $('#add-message').text("Please enter valid product details.").css('color', 'red');
-            return;
-        }
-
-        const product = { name, price, category, stock };
-
-        try {
-            const response = await fetch(`http://localhost:8081/api/products`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(product)
-            });
-
-            if (response.ok) {
-                $('#add-message').text("Product added successfully.").css('color', 'green');
-                $('#add-form')[0].reset();
-            } else {
-                $('#add-message').text("Failed to add product.").css('color', 'red');
-            }
-        } catch (error) {
-            $('#add-message').text("Error: " + error.message).css('color', 'red');
-        }
-    }
-
-    async function updateProduct() {
-        const id = parseInt($('#update-id').val());
-        const name = $('#update-name').val().trim();
-        const price = parseFloat($('#update-price').val());
-        const category = $('#update-category').val().trim();
-        const stock = parseInt($('#update-stock').val());
-
-        if (!id || !name || price <= 0 || !category || stock < 0 || !Number.isInteger(stock)) {
-            $('#update-message').text("Please enter valid update details.").css('color', 'red');
-            return;
-        }
-
-        const product = { name, price, category, stock };
-
-        try {
-            const response = await fetch(`http://localhost:8081/api/products/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(product)
-            });
-
-            if (response.ok) {
-                $('#update-message').text("Product updated successfully.").css('color', 'green');
-                $('#update-form')[0].reset();
-            } else {
-                $('#update-message').text("Failed to update product.").css('color', 'red');
-            }
-        } catch (error) {
-            $('#update-message').text("Error: " + error.message).css('color', 'red');
-        }
-    }
-
-    async function deleteProduct() {
-        const id = parseInt($('#delete-id').val());
-
-        if (!id || id <= 0) {
-            $('#delete-message').text("Please enter a valid product ID.").css('color', 'red');
-            return;
-        }
-
-        try {
-            const response = await fetch(`http://localhost:8081/api/products/${id}`, {
-                method: 'DELETE'
-            });
-
-            if (response.ok) {
-                $('#delete-message').text(`Product with ID ${id} deleted.`).css('color', 'green');
-                $('#delete-form')[0].reset();
-            } else {
-                $('#delete-message').text("Failed to delete product.").css('color', 'red');
-            }
-        } catch (error) {
-            $('#delete-message').text("Error: " + error.message).css('color', 'red');
-        }
-    }
-
     $(document).ready(function () {
-        $('#add-form').submit(function (e) {
+    
+        // ---------- ADD PRODUCT ----------
+        $('#add-form').on('submit', async function (e) {
             e.preventDefault();
-            createProduct();
+            clearErrors();
+    
+            const name = $('#add-productname').val().trim();
+            const price = parseFloat($('#add-price').val());
+            const category = $('#add-category').val().trim();
+            const stock = parseInt($('#add-stock').val());
+    
+            let hasError = false;
+            if (!name) { showError('#add-productname', 'Name is required'); hasError = true; }
+            if (isNaN(price) || price <= 0) { showError('#add-price', 'Enter a valid price'); hasError = true; }
+            if (!category) { showError('#add-category', 'Category is required'); hasError = true;}
+            else if (!/^[a-zA-Z\s]+$/.test(category)) { showError('#add-category', 'Category must contain only letters'); hasError = true; }
+            if (isNaN(stock) || stock < 0) { showError('#add-stock', 'Enter a valid stock'); hasError = true; }
+    
+            if (hasError) return;
+    
+            const product = { name, price, category, stock };
+    
+            try {
+                const res = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                if (res.ok) {
+                    $('#add-message').text('Product added successfully!').css('color', 'green');
+                    $('#add-form')[0].reset();
+                } else {
+                    $('#add-message').text('Error adding product.').css('color', 'red');
+                }
+            } catch (err) {
+                $('#add-message').text('Error: ' + err.message).css('color', 'red');
+            }
         });
-
-        $('#update-form').submit(function (e) {
+    
+        // ---------- UPDATE PRODUCT ----------
+        $('#update-form').on('submit', async function (e) {
             e.preventDefault();
-            updateProduct();
+            clearErrors();
+    
+            const id = parseInt($('#update-id').val());
+            const name = $('#update-name').val().trim();
+            const price = parseFloat($('#update-price').val());
+            const category = $('#update-category').val().trim();
+            const stock = parseInt($('#update-stock').val());
+    
+            let hasError = false;
+            if (!id || id <= 0) { showError('#update-id', 'Valid ID required'); hasError = true; }
+            if (!name) { showError('#update-name', 'Name required'); hasError = true; }
+            if (isNaN(price) || price <= 0) { showError('#update-price', 'Valid price required'); hasError = true; }
+            if (!category) { showError('#update-category', 'Category required'); hasError = true; }
+            if (isNaN(stock) || stock < 0) { showError('#update-stock', 'Valid stock required'); hasError = true; }
+    
+            if (hasError) return;
+    
+            const product = { name, price, category, stock };
+    
+            try {
+                const res = await fetch(`/api/products/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(product)
+                });
+                if (res.ok) {
+                    $('#update-message').text('Product updated successfully!').css('color', 'green');
+                    $('#update-form')[0].reset();
+                } else {
+                    $('#update-message').text('Error updating product.').css('color', 'red');
+                }
+            } catch (err) {
+                $('#update-message').text('Error: ' + err.message).css('color', 'red');
+            }
         });
-
-        $('#delete-form').submit(function (e) {
+    
+        // ---------- DELETE PRODUCT ----------
+        $('#delete-form').on('submit', async function (e) {
             e.preventDefault();
-            deleteProduct();
+            clearErrors();
+    
+            const id = parseInt($('#delete-id').val());
+    
+            if (!id || id <= 0) {
+                showError('#delete-id', 'Valid ID required');
+                return;
+            }
+    
+            try {
+                const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    $('#delete-message').text('Product deleted successfully.').css('color', 'green');
+                    $('#delete-form')[0].reset();
+                } else {
+                    $('#delete-message').text('Error deleting product.').css('color', 'red');
+                }
+            } catch (err) {
+                $('#delete-message').text('Error: ' + err.message).css('color', 'red');
+            }
         });
+    
+        // ---------- HELPER FUNCTIONS ----------
+        function clearErrors() {
+            $('.error').remove(); // Remove all existing error messages
+        }
+    
+        function showError(selector, message) {
+            $(selector).after(`<span class="error" style="color:red">${message}</span>`);
+        }
     });
-</script>
+    </script>
+    
 </body>
 </html>
