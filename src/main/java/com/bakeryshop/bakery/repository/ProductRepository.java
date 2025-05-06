@@ -10,7 +10,7 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT o.orderId AS orderId, p.name AS productName, op.quantity AS quantity " +
-           "FROM OrderProducts op " +
+           "FROM OrdersProducts op " +
            "INNER JOIN op.order o " +
            "INNER JOIN op.product p")
     List<OrderProductView> fetchOrderProductDetails();

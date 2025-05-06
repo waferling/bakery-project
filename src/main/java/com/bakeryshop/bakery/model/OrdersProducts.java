@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 
 
 @Entity
-@Table(name = "order_products")
-public class OrderProducts {
+@Table(name = "orders_products")
+public class OrdersProducts {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class OrderProducts {
 
     private BigDecimal price;
 
-    public OrderProducts() {
+    public OrdersProducts() {
         // Default constructor
     }
 

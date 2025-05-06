@@ -59,6 +59,13 @@ public class ProductController {
         return "products"; // This will load: webapp/WEB-INF/views/products.jsp
     }
 
+    // Output of Inner Join Query on Products table and Orders Table
+    // This will return a list of order and product details 
+    @GetMapping("/order-product-details")
+    public List<ProductRepository.OrderProductView> getOrderProductDetails() {
+        return productService.getOrderProductDetails();
+    } 
+
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
         try {

@@ -27,7 +27,7 @@ public class Order {
     private BigDecimal total;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderProducts> orderProducts;
+    private List<OrdersProducts> ordersProducts;
 
     public Order() {
         // Default constructor
@@ -72,11 +72,11 @@ public class Order {
         this.total = total;
     }
 
-    public List<OrderProducts> getOrderProducts() {
-        return orderProducts;
+    public List<OrdersProducts> getOrdersProducts() {
+        return ordersProducts;
     }
 
-    public void setOrderProducts(List<OrderProducts> orderProducts) {
-        this.orderProducts = orderProducts;
+    public void setOrderProducts(List<OrdersProducts> ordersProducts) {
+        this.ordersProducts = ordersProducts;
     }
 }
