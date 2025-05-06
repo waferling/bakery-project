@@ -52,10 +52,10 @@ public class ProductController {
     @GetMapping("/products")
     public String viewProducts(Model model) {
 
-        System.out.println("\nInside viewProducts controller method\n HELLO");
+        System.out.println("\nInside viewProducts controller method\n");
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
-        // return "products";  // Trying out products.html instead of products.jsp 
+        // return "products";  // Gives products.html instead of products.jsp 
         return "products"; // This will load: webapp/WEB-INF/views/products.jsp
     }
 

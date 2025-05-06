@@ -103,7 +103,7 @@
             if (!name) { showError('#add-productname', 'Name is required'); hasError = true; }
             if (isNaN(price) || price <= 0) { showError('#add-price', 'Enter a valid price'); hasError = true; }
             if (!category) { showError('#add-category', 'Category is required'); hasError = true;}
-            else if (!/^[a-zA-Z\s]+$/.test(category)) { showError('#add-category', 'Category must contain only letters'); hasError = true; }
+            else if (!/^[a-zA-Z\s]+$/.test(category)) { showError('#add-category','Category must contain only letters'); hasError = true; }
             if (isNaN(stock) || stock < 0) { showError('#add-stock', 'Enter a valid stock'); hasError = true; }
     
             if (hasError) return;
