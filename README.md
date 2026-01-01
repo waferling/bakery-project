@@ -1,4 +1,4 @@
-## :memo: Bakery Management Application
+## :cake: Bakery Management Application
 
 A full-stack bakery management system application, complete with a data-driven dashboard, a product form, menu, and a user-friendly pink-and-green interface.
 
